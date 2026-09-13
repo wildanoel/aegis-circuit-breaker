@@ -1,5 +1,5 @@
 # { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
-#
+
 # Aegis - Autonomous Exploit-Response Circuit Breaker
 #
 # Aegis is a security primitive for the agentic economy. Anyone can submit an
@@ -14,10 +14,6 @@
 #      no trusted operator.
 #   2. Assigns a severity tier and pays a severity-scaled bounty to the reporter
 #      from the pre-funded pool, and credits on-chain reporter reputation.
-#
-# This is the "emergency halt module" reference build for the Autonomous
-# Protocols track: a contract that governs and pauses OTHER contracts, driven
-# purely by evidence-based consensus.
 
 import json
 from dataclasses import dataclass
@@ -70,7 +66,10 @@ class Aegis(gl.Contract):
     base_bounty: u256
 
     protocols: TreeMap[Address, Protocol]
-    reports: DynArray[Report]
+    # report id -> Report (TreeMap keyed by id; GenVM rejects DynArray of
+    # dataclasses on the hosted studio runner)
+    reports: TreeMap[u256, Report]
+    report_count: u256
     # reporter address -> confirmed-finding reputation score
     reputation: TreeMap[Address, u256]
     # reporter address -> bounty that was owed but could not be auto-paid
@@ -80,6 +79,7 @@ class Aegis(gl.Contract):
     def __init__(self, base_bounty: bigint = 0):
         self.guardian = gl.message.sender_address
         self.base_bounty = u256(base_bounty)
+        self.report_count = u256(0)
 
     # ------------------------------------------------------------------ #
     # Protection registry
@@ -118,7 +118,7 @@ class Aegis(gl.Contract):
             raise gl.vm.UserError("Protocol already halted")
 
         reporter = gl.message.sender_address
-        report_id = u256(len(self.reports))
+        report_id = u256(self.report_count)
 
         verdict = self._adjudicate(target_addr, evidence_url, title)
 
@@ -164,7 +164,8 @@ class Aegis(gl.Contract):
         else:
             report.status = "rejected"
 
-        self.reports.append(report)
+        self.reports[report_id] = report
+        self.report_count = u256(self.report_count + 1)
 
     def _adjudicate(self, target_addr: Address, evidence_url: str, title: str) -> dict:
         """
@@ -323,15 +324,15 @@ Your entire output must be valid JSON parseable without any changes."""
     @gl.public.view
     def get_reports(self) -> list:
         out = []
-        for r in self.reports:
-            out.append(self._report_to_dict(r))
+        for i in range(int(self.report_count)):
+            out.append(self._report_to_dict(self.reports[u256(i)]))
         return out
 
     @gl.public.view
     def get_report(self, report_id: int) -> dict:
-        if report_id < 0 or report_id >= len(self.reports):
+        if report_id < 0 or report_id >= int(self.report_count):
             raise gl.vm.UserError("Unknown report")
-        return self._report_to_dict(self.reports[report_id])
+        return self._report_to_dict(self.reports[u256(report_id)])
 
     @gl.public.view
     def get_reputation(self, reporter: str) -> int:
@@ -345,8 +346,8 @@ Your entire output must be valid JSON parseable without any changes."""
     def get_stats(self) -> dict:
         confirmed = 0
         halted = 0
-        for r in self.reports:
-            if r.status == "confirmed":
+        for i in range(int(self.report_count)):
+            if self.reports[u256(i)].status == "confirmed":
                 confirmed += 1
         for _, p in self.protocols.items():
             if p.halted:
@@ -355,7 +356,7 @@ Your entire output must be valid JSON parseable without any changes."""
             "guardian": self.guardian.as_hex,
             "base_bounty": int(self.base_bounty),
             "protocols": len(self.protocols),
-            "reports": len(self.reports),
+            "reports": int(self.report_count),
             "confirmed": confirmed,
             "halted": halted,
         }
