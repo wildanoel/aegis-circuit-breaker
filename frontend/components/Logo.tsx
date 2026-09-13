@@ -1,18 +1,21 @@
 /**
- * GenLayer Logo Component
- * Per Brand Guidelines 2025
+ * Aegis Logo
+ *
+ * Mark: angular shield with a lightning-bolt cutout (negative space),
+ * single-color via currentColor so it adapts to light/dark automatically.
+ * Wordmark: "Aegis" in Space Grotesk.
  *
  * Variants:
- * - "full": Strong Mark + Wordmark (for desktop/larger spaces)
- * - "mark": Strong Mark only (for mobile/compact spaces)
- * - "wordmark": Wordmark only (for specific cases)
+ * - "full":  Mark + Wordmark
+ * - "mark":  Mark only (navbar, compact spaces)
+ * - "wordmark": text only
  */
 
-import React from 'react';
+import React from "react";
 
-export type LogoVariant = 'full' | 'mark' | 'wordmark';
-export type LogoSize = 'sm' | 'md' | 'lg';
-export type LogoTheme = 'light' | 'dark';
+export type LogoVariant = "full" | "mark" | "wordmark";
+export type LogoSize = "sm" | "md" | "lg";
+export type LogoTheme = "light" | "dark";
 
 interface LogoProps {
   variant?: LogoVariant;
@@ -22,54 +25,68 @@ interface LogoProps {
 }
 
 const sizeMap = {
-  sm: { mark: 'w-5 h-5', text: 'text-base' },
-  md: { mark: 'w-6 h-6', text: 'text-xl' },
-  lg: { mark: 'w-8 h-8', text: 'text-2xl' },
+  sm: { mark: "w-5 h-5", text: "text-base" },
+  md: { mark: "w-6 h-6", text: "text-lg" },
+  lg: { mark: "w-8 h-8", text: "text-2xl" },
 };
 
-export function Logo({
-  variant = 'full',
-  size = 'md',
-  theme = 'dark',
-  className = '',
-}: LogoProps) {
-  const colorClass = theme === 'dark' ? 'text-foreground' : 'text-background';
-  const { mark: markSize, text: textSize } = sizeMap[size];
+// Shield outline + bolt cutout, fill-rule evenodd punches the bolt out.
+export const MARK_PATH =
+  "M16 3 L28 8 L28 19 L16 29.5 L4 19 L4 8 Z " +
+  "M18.6 7.6 L10.8 18.2 L15.2 18.2 L13.4 24.6 L21.2 13.9 L16.7 13.9 Z";
 
-  // GenLayer Strong Mark (Triangle/Hands symbol)
-  const StrongMark = () => (
+export function AegisMark({
+  size = "md",
+  className = "",
+}: {
+  size?: LogoSize;
+  className?: string;
+}) {
+  return (
     <svg
-      className={`${markSize} ${colorClass} transition-colors`}
-      viewBox="0 0 97.76 91.93"
+      viewBox="0 0 32 32"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label="GenLayer Logo"
+      aria-hidden="true"
+      className={`${sizeMap[size].mark} ${className}`}
+      fill="currentColor"
+      fillRule="evenodd"
     >
-      <path
-        fill="currentColor"
-        d="M44.26 32.35L27.72 67.12L43.29 74.9L0 91.93L44.26 0L44.26 32.35ZM53.5 32.35L70.04 67.12L54.47 74.9L97.76 91.93L53.5 0L53.5 32.35ZM48.64 43.78L58.33 62.94L48.64 67.69L39.47 62.92L48.64 43.78Z"
-      />
+      <path d={MARK_PATH} fillRule="evenodd" />
     </svg>
   );
+}
 
-  // Wordmark (using Space Grotesk from layout)
+export function Logo({
+  variant = "full",
+  size = "md",
+  theme = "dark",
+  className = "",
+}: LogoProps) {
+  const colorClass = theme === "dark" ? "text-foreground" : "text-background";
+  const { mark: markSize, text: textSize } = sizeMap[size];
+
   const Wordmark = () => (
     <span
       className={`${textSize} font-bold ${colorClass} font-[family-name:var(--font-display)] transition-colors`}
-      style={{ letterSpacing: '-0.02em' }}
+      style={{ letterSpacing: "-0.02em" }}
     >
-      GenLayer
+      Aegis
     </span>
   );
 
-  if (variant === 'mark') {
+  if (variant === "mark") {
     return (
-      <div className={`inline-flex items-center ${className}`}>
-        <StrongMark />
+      <div
+        className={`inline-flex items-center text-accent ${className}`}
+        role="img"
+        aria-label="Aegis logo"
+      >
+        <AegisMark size={size} />
       </div>
     );
   }
 
-  if (variant === 'wordmark') {
+  if (variant === "wordmark") {
     return (
       <div className={`inline-flex items-center ${className}`}>
         <Wordmark />
@@ -77,24 +94,22 @@ export function Logo({
     );
   }
 
-  // Full logo (default): Strong Mark + Wordmark
   return (
     <div className={`inline-flex items-center gap-2 ${className}`}>
-      <StrongMark />
+      <AegisMark size={size} className="text-accent" />
       <Wordmark />
     </div>
   );
 }
 
-// Convenience components for common use cases
-export function LogoFull(props: Omit<LogoProps, 'variant'>) {
+export function LogoFull(props: Omit<LogoProps, "variant">) {
   return <Logo {...props} variant="full" />;
 }
 
-export function LogoMark(props: Omit<LogoProps, 'variant'>) {
+export function LogoMark(props: Omit<LogoProps, "variant">) {
   return <Logo {...props} variant="mark" />;
 }
 
-export function LogoWordmark(props: Omit<LogoProps, 'variant'>) {
+export function LogoWordmark(props: Omit<LogoProps, "variant">) {
   return <Logo {...props} variant="wordmark" />;
 }
