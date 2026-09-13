@@ -15,7 +15,7 @@ function StatCard({
   accent?: string;
 }) {
   return (
-    <div className="glass-card p-5 flex items-center gap-4">
+    <div className="surface p-5 flex items-center gap-4">
       <div className={`rounded-lg p-3 ${accent ?? "bg-accent/15 text-accent"}`}>{icon}</div>
       <div>
         <div className="text-2xl font-bold leading-none">{value}</div>
@@ -36,13 +36,13 @@ export function StatsBar() {
         icon={<CheckCircle2 className="w-5 h-5" />}
         label="Confirmed exploits"
         value={data?.confirmed ?? 0}
-        accent="bg-emerald-500/15 text-emerald-400"
+        accent="bg-success/10 text-success"
       />
       <StatCard
         icon={<OctagonPause className="w-5 h-5" />}
         label="Active halts"
         value={data?.halted ?? 0}
-        accent="bg-red-500/15 text-red-400"
+        accent="bg-destructive/10 text-destructive"
       />
     </div>
   );

@@ -25,7 +25,7 @@ export function AddressDisplay({
   const [copied, setCopied] = useState(false);
 
   if (!address) {
-    return <span className={className}>—</span>;
+    return <span className={className}>-</span>;
   }
 
   const handleCopy = async (e: React.MouseEvent) => {
@@ -54,11 +54,11 @@ export function AddressDisplay({
       {showCopy && (
         <button
           onClick={handleCopy}
-          className="opacity-50 hover:opacity-100 transition-opacity p-0.5 hover:bg-white/5 rounded"
+          className="opacity-50 hover:opacity-100 transition-opacity p-0.5 hover:bg-muted rounded"
           aria-label="Copy address"
         >
           {copied ? (
-            <Check className="w-3.5 h-3.5 text-green-400" />
+            <Check className="w-3.5 h-3.5 text-success" />
           ) : (
             <Copy className="w-3.5 h-3.5" />
           )}

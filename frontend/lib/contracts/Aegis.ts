@@ -3,7 +3,7 @@ import { studionet } from "genlayer-js/chains";
 import type { Protocol, Report, AegisStats, TransactionReceipt } from "./types";
 
 /**
- * Aegis contract client — the autonomous exploit-response circuit breaker.
+ * Aegis contract client - the autonomous exploit-response circuit breaker.
  */
 class Aegis {
   private contractAddress: `0x${string}`;

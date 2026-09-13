@@ -4,98 +4,101 @@ import { Navbar } from "@/components/Navbar";
 import { StatsBar } from "@/components/StatsBar";
 import { ProtocolsList } from "@/components/ProtocolsList";
 import { ReportsFeed } from "@/components/ReportsFeed";
-import { ShieldCheck } from "lucide-react";
+
+const STEPS = [
+  {
+    n: "01",
+    title: "Opt in",
+    body: "A protocol registers for protection. Its contract reads is_halted(target) and pauses itself when a halt is confirmed.",
+  },
+  {
+    n: "02",
+    title: "Report",
+    body: "Anyone submits an exploit report with a public evidence URL and the target address. No permission needed.",
+  },
+  {
+    n: "03",
+    title: "Consensus",
+    body: "GenLayer validators independently fetch the same evidence and re-judge it under the Equivalence Principle. Fabricated claims fail here.",
+  },
+  {
+    n: "04",
+    title: "Response",
+    body: "A confirmed exploit arms the halt, pays a severity-scaled bounty from the pool, and credits reporter reputation. No human in the loop.",
+  },
+];
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex min-h-screen flex-col">
       <Navbar />
 
-      <main className="flex-grow pt-20 pb-12 px-4 md:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <main className="flex-grow px-4 pb-20 pt-28 md:px-6">
+        <div className="mx-auto max-w-6xl">
           {/* Hero */}
-          <div className="text-center mb-10 animate-fade-in">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 text-xs text-muted-foreground mb-4">
-              <ShieldCheck className="w-3.5 h-3.5 text-accent" />
-              Autonomous Protocols · GenLayer Intelligent Contract
-            </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-              The autonomous exploit
-              <br />
-              circuit breaker
+          <section className="mb-14 animate-fade-in">
+            <p className="eyebrow mb-4">GenLayer Intelligent Contract</p>
+            <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight md:text-5xl lg:text-6xl">
+              A circuit breaker that pulls itself.
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Anyone reports an exploit. GenLayer validators independently verify the
-              evidence and reach consensus. Confirmed exploits autonomously halt the
-              target protocol and pay the reporter. No multisig, no trusted operator.
+            <p className="mt-5 max-w-2xl text-base text-muted-foreground md:text-lg">
+              Anyone can report an exploit. Validators verify the public evidence
+              and reach consensus. If the exploit is real, the contract halts the
+              target protocol and pays the reporter. No multisig, no trusted
+              operator, no human in the loop.
             </p>
-          </div>
+          </section>
 
           {/* Stats */}
-          <div className="mb-8 animate-slide-up">
+          <section className="mb-10 animate-slide-up">
             <StatsBar />
-          </div>
+          </section>
 
-          {/* Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-            <div className="lg:col-span-5 animate-slide-up">
+          {/* Protocols + feed */}
+          <section className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+            <div className="animate-slide-up lg:col-span-5">
               <ProtocolsList />
             </div>
-            <div className="lg:col-span-7 animate-slide-up" style={{ animationDelay: "100ms" }}>
+            <div
+              className="animate-slide-up lg:col-span-7"
+              style={{ animationDelay: "80ms" }}
+            >
               <ReportsFeed />
             </div>
-          </div>
+          </section>
 
           {/* How it works */}
-          <div className="mt-8 glass-card p-6 md:p-8 animate-fade-in" style={{ animationDelay: "200ms" }}>
-            <h2 className="text-2xl font-bold mb-4">How Aegis Works</h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div className="space-y-2">
-                <div className="text-accent font-bold text-lg">1. Opt in</div>
-                <p className="text-sm text-muted-foreground">
-                  A protocol registers for protection. Its contract reads{" "}
-                  <code>is_halted(target)</code> and pauses itself on a confirmed halt.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <div className="text-accent font-bold text-lg">2. Report</div>
-                <p className="text-sm text-muted-foreground">
-                  Anyone submits an exploit report with a public evidence URL and a
-                  target address.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <div className="text-accent font-bold text-lg">3. Consensus</div>
-                <p className="text-sm text-muted-foreground">
-                  Validators independently fetch the evidence and re-judge it under the
-                  Equivalence Principle. Fabricated claims fail consensus.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <div className="text-accent font-bold text-lg">4. Autonomous response</div>
-                <p className="text-sm text-muted-foreground">
-                  A confirmed exploit arms the halt, pays a severity-scaled bounty, and
-                  credits reporter reputation — with no human in the loop.
-                </p>
-              </div>
+          <section className="mt-16 border-t border-border pt-12">
+            <h2 className="text-2xl font-bold tracking-tight">How it works</h2>
+            <div className="mt-8 grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-border bg-border md:grid-cols-4">
+              {STEPS.map((s) => (
+                <div key={s.n} className="bg-card p-6">
+                  <div className="text-xs font-semibold text-accent">{s.n}</div>
+                  <div className="mt-3 font-semibold">{s.title}</div>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {s.body}
+                  </p>
+                </div>
+              ))}
             </div>
-          </div>
+          </section>
         </div>
       </main>
 
-      <footer className="border-t border-white/10 py-3">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-          <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground">
-            <a href="https://genlayer.com" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">
-              Powered by GenLayer
+      <footer className="border-t border-border py-6">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 text-sm text-muted-foreground md:px-6">
+          <span>Aegis: autonomous exploit-response, built on GenLayer.</span>
+          <span className="flex items-center gap-5">
+            <a href="https://genlayer.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
+              GenLayer
             </a>
-            <a href="https://studio.genlayer.com" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">
+            <a href="https://studio.genlayer.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
               Studio
             </a>
-            <a href="https://docs.genlayer.com" target="_blank" rel="noopener noreferrer" className="hover:text-accent transition-colors">
+            <a href="https://docs.genlayer.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
               Docs
             </a>
-          </div>
+          </span>
         </div>
       </footer>
     </div>

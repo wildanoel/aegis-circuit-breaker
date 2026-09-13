@@ -97,12 +97,12 @@ export function AccountPanel() {
     return (
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogTrigger asChild>
-          <Button variant="gradient" disabled={isLoading}>
+          <Button variant="default" disabled={isLoading}>
             <User className="w-4 h-4 mr-2" />
             Connect Wallet
           </Button>
         </DialogTrigger>
-        <DialogContent className="brand-card border-2">
+        <DialogContent className="surface">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold">
               Connect to GenLayer
@@ -126,7 +126,7 @@ export function AccountPanel() {
 
                 <Button
                   onClick={() => window.open(METAMASK_INSTALL_URL, "_blank")}
-                  variant="gradient"
+                  variant="default"
                   className="w-full h-14 text-lg"
                 >
                   <ExternalLink className="w-5 h-5 mr-2" />
@@ -144,7 +144,7 @@ export function AccountPanel() {
               <>
                 <Button
                   onClick={handleConnect}
-                  variant="gradient"
+                  variant="default"
                   className="w-full h-14 text-lg"
                   disabled={isConnecting}
                 >
@@ -182,12 +182,12 @@ export function AccountPanel() {
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <div className="flex items-center gap-4">
-        <div className="brand-card px-4 py-2 flex items-center gap-3">
+        <div className="surface px-4 py-2 flex items-center gap-3">
           <div className="flex items-center gap-2">
             <User className="w-4 h-4 text-accent" />
             <AddressDisplay address={address} maxLength={12} />
           </div>
-          <div className="h-4 w-px bg-white/10" />
+          <div className="h-4 w-px bg-border" />
           <div className="flex items-center gap-1">
             <span className="text-sm font-semibold text-accent">{reputation}</span>
             <span className="text-xs text-muted-foreground">rep</span>
@@ -201,7 +201,7 @@ export function AccountPanel() {
         </DialogTrigger>
       </div>
 
-      <DialogContent className="brand-card border-2">
+      <DialogContent className="surface">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
             Wallet Details
@@ -212,24 +212,24 @@ export function AccountPanel() {
         </DialogHeader>
 
         <div className="space-y-4 mt-4">
-          <div className="brand-card p-4 space-y-2">
+          <div className="surface p-4 space-y-2">
             <p className="text-sm text-muted-foreground">Your Address</p>
             <code className="text-sm font-mono break-all">{address}</code>
           </div>
 
-          <div className="brand-card p-4 space-y-2">
+          <div className="surface p-4 space-y-2">
             <p className="text-sm text-muted-foreground">Reporter Reputation</p>
             <p className="text-2xl font-bold text-accent">{reputation}</p>
           </div>
 
-          <div className="brand-card p-4 space-y-2">
+          <div className="surface p-4 space-y-2">
             <p className="text-sm text-muted-foreground">Network Status</p>
             <div className="flex items-center gap-2">
               <div
                 className={`w-2 h-2 rounded-full ${
                   isOnCorrectNetwork
-                    ? "bg-green-500"
-                    : "bg-yellow-500 animate-pulse"
+                    ? "bg-success"
+                    : "bg-warning animate-pulse"
                 }`}
               />
               <span className="text-sm">
@@ -241,8 +241,8 @@ export function AccountPanel() {
           </div>
 
           {!isOnCorrectNetwork && (
-            <Alert variant="default" className="bg-yellow-500/10 border-yellow-500/20">
-              <AlertCircle className="h-4 w-4 text-yellow-500" />
+            <Alert variant="default" className="bg-warning/10 border-warning/30">
+              <AlertCircle className="h-4 w-4 text-warning" />
               <AlertTitle>Network Warning</AlertTitle>
               <AlertDescription>
                 You&apos;re not on the GenLayer network. Please switch networks in
@@ -259,7 +259,7 @@ export function AccountPanel() {
             </Alert>
           )}
 
-          <div className="mt-6 pt-4 border-t border-white/10 space-y-3">
+          <div className="mt-6 pt-4 border-t border-border space-y-3">
             <Button
               onClick={handleSwitchAccount}
               variant="outline"

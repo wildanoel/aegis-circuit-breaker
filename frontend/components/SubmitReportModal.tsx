@@ -54,12 +54,12 @@ export function SubmitReportModal({ defaultTarget }: { defaultTarget?: string })
   return (
     <Dialog open={isOpen} onOpenChange={(o) => setIsOpen(o)}>
       <DialogTrigger asChild>
-        <Button variant="gradient" disabled={!isConnected || !address || isLoading}>
+        <Button variant="default" disabled={!isConnected || !address || isLoading}>
           <ShieldAlert className="w-4 h-4 mr-2" />
           Report Exploit
         </Button>
       </DialogTrigger>
-      <DialogContent className="brand-card border-2 sm:max-w-[540px]">
+      <DialogContent className="surface sm:max-w-[540px]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Report an Active Exploit</DialogTitle>
           <DialogDescription>
@@ -120,7 +120,7 @@ export function SubmitReportModal({ defaultTarget }: { defaultTarget?: string })
             >
               Cancel
             </Button>
-            <Button type="submit" variant="gradient" className="flex-1" disabled={isPending}>
+            <Button type="submit" variant="default" className="flex-1" disabled={isPending}>
               {isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />

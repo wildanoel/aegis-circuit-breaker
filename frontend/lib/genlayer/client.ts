@@ -17,7 +17,7 @@ export const GENLAYER_NETWORK = {
     decimals: 18,
   },
   rpcUrls: [process.env.NEXT_PUBLIC_GENLAYER_RPC_URL || "https://studio.genlayer.com/api"],
-  blockExplorerUrls: [],
+  blockExplorerUrls: ["https://explorer-studio.genlayer.com"],
 };
 
 // Ethereum provider type from window

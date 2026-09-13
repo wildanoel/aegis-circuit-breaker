@@ -10,7 +10,7 @@ export function ProtocolsList() {
   const { data: protocols, isLoading } = useProtocols();
 
   return (
-    <div className="glass-card p-6">
+    <div className="surface p-6">
       <div className="flex items-center justify-between mb-5">
         <h2 className="text-xl font-bold flex items-center gap-2">
           <Shield className="w-5 h-5 text-accent" />
@@ -31,7 +31,7 @@ export function ProtocolsList() {
             <div
               key={p.target}
               className={`rounded-lg border p-4 transition-colors ${
-                p.halted ? "border-red-500/40 bg-red-500/5" : "border-white/10 hover:border-white/20"
+                p.halted ? "border-destructive/40 bg-destructive/5" : "border-border hover:border-border"
               }`}
             >
               <div className="flex items-center justify-between">
@@ -43,7 +43,7 @@ export function ProtocolsList() {
                       HALTED
                     </Badge>
                   ) : (
-                    <Badge variant="secondary" className="text-emerald-400">
+                    <Badge variant="secondary" className="text-success">
                       Operational
                     </Badge>
                   )}
@@ -63,7 +63,7 @@ export function ProtocolsList() {
                 <AddressDisplay address={p.target} maxLength={20} showCopy />
               </div>
               {p.halted && (
-                <div className="mt-2 text-xs text-red-400">
+                <div className="mt-2 text-xs text-destructive">
                   Halt armed by report #{p.halt_report_id}
                 </div>
               )}

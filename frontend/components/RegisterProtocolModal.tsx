@@ -60,7 +60,7 @@ export function RegisterProtocolModal() {
           Protect a Protocol
         </Button>
       </DialogTrigger>
-      <DialogContent className="brand-card border-2 sm:max-w-[500px]">
+      <DialogContent className="surface sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Register Protection</DialogTitle>
           <DialogDescription>
@@ -88,7 +88,7 @@ export function RegisterProtocolModal() {
             <Button type="button" variant="secondary" className="flex-1" onClick={() => setIsOpen(false)} disabled={isPending}>
               Cancel
             </Button>
-            <Button type="submit" variant="gradient" className="flex-1" disabled={isPending}>
+            <Button type="submit" variant="default" className="flex-1" disabled={isPending}>
               {isPending ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />

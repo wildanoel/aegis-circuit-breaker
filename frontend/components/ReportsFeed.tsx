@@ -7,20 +7,20 @@ import { Badge } from "./ui/badge";
 import type { Report } from "@/lib/contracts/types";
 
 const SEVERITY_STYLE: Record<Report["severity"], string> = {
-  critical: "bg-red-500/20 text-red-400 border-red-500/40",
-  high: "bg-orange-500/20 text-orange-400 border-orange-500/40",
-  medium: "bg-yellow-500/20 text-yellow-400 border-yellow-500/40",
-  low: "bg-sky-500/20 text-sky-400 border-sky-500/40",
+  critical: "bg-destructive/10 text-destructive border-destructive/40",
+  high: "bg-warning/10 text-warning border-warning/40",
+  medium: "bg-warning/10 text-warning border-warning/40",
+  low: "bg-accent/10 text-accent border-accent/40",
 };
 
 function ReportRow({ r }: { r: Report }) {
   const confirmed = r.status === "confirmed";
   return (
-    <div className="rounded-lg border border-white/10 p-4 hover:border-white/20 transition-colors">
+    <div className="rounded-lg border border-border p-4 hover:border-border transition-colors">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0">
           {confirmed ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
           ) : (
             <XCircle className="w-4 h-4 text-muted-foreground shrink-0" />
           )}
@@ -36,7 +36,7 @@ function ReportRow({ r }: { r: Report }) {
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
         <span>
           Status:{" "}
-          <span className={confirmed ? "text-emerald-400" : "text-foreground"}>{r.status}</span>
+          <span className={confirmed ? "text-success" : "text-foreground"}>{r.status}</span>
         </span>
         <span>Confidence: {r.confidence}%</span>
         {r.bounty_paid > 0 && <span className="text-accent">Bounty: {r.bounty_paid} wei</span>}
@@ -61,7 +61,7 @@ export function ReportsFeed() {
   const ordered = reports ? [...reports].reverse() : [];
 
   return (
-    <div className="glass-card p-6">
+    <div className="surface p-6">
       <h2 className="text-xl font-bold flex items-center gap-2 mb-5">
         <FileSearch className="w-5 h-5 text-accent" />
         Adjudication Feed
