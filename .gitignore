@@ -15,3 +15,5 @@ frontend/out/
 
 # GenLayer
 *.log
+out
+frontend/.env.local
