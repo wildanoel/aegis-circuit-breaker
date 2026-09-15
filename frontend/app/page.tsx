@@ -89,14 +89,24 @@ export default function HomePage() {
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 text-sm text-muted-foreground md:px-6">
           <span>Aegis: autonomous exploit-response, built on GenLayer.</span>
           <span className="flex items-center gap-5">
+            <a
+              href="https://github.com/wildanoel/aegis-circuit-breaker"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground"
+            >
+              Source
+            </a>
+            <a
+              href="https://github.com/wildanoel/aegis-circuit-breaker/blob/main/contracts/aegis.py"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-foreground"
+            >
+              Contract
+            </a>
             <a href="https://genlayer.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
               GenLayer
-            </a>
-            <a href="https://studio.genlayer.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
-              Studio
-            </a>
-            <a href="https://docs.genlayer.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">
-              Docs
             </a>
           </span>
         </div>
