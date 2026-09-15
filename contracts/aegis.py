@@ -64,6 +64,30 @@ def _normalize_severity(raw) -> str:
     return severity
 
 
+def _parse_address(raw) -> Address:
+    """Parse a caller-supplied address string into an Address.
+
+    Address() only recognises a hex string when it carries the "0x" prefix and
+    is exactly 42 characters. Anything else falls through to its base64 branch
+    and dies with a raw binascii error, which surfaces to the caller as an
+    opaque "execution failed" with no cause. Clients differ on whether they
+    keep the prefix, so normalize here and raise a UserError the caller can
+    actually read.
+    """
+    if isinstance(raw, Address):
+        return raw
+    text = str(raw).strip()
+    if text.startswith("0x") or text.startswith("0X"):
+        text = text[2:]
+    if len(text) != 40:
+        raise gl.vm.UserError("Address must be 20 hex bytes")
+    try:
+        int(text, 16)
+    except ValueError:
+        raise gl.vm.UserError("Address must be hexadecimal")
+    return Address("0x" + text.lower())
+
+
 @allow_storage
 @dataclass
 class Protocol:
@@ -122,7 +146,7 @@ class Aegis(gl.Contract):
     @gl.public.write
     def register_protection(self, target: str, label: str, docs_url: str) -> None:
         """Opt a protocol into Aegis protection. Idempotent per target address."""
-        target_addr = Address(target)
+        target_addr = _parse_address(target)
         if target_addr in self.protocols:
             raise gl.vm.UserError("Protocol already registered")
         self.protocols[target_addr] = Protocol(
@@ -145,7 +169,7 @@ class Aegis(gl.Contract):
         under the Equivalence Principle. On confirmed consensus the contract
         arms the halt signal and pays the reporter.
         """
-        target_addr = Address(target)
+        target_addr = _parse_address(target)
         if target_addr not in self.protocols:
             raise gl.vm.UserError("Target is not a protected protocol")
         if self.protocols[target_addr].halted:
@@ -369,7 +393,7 @@ Your entire output must be valid JSON parseable without any changes."""
         """
         if gl.message.sender_address != self.guardian:
             raise gl.vm.UserError("Only guardian")
-        target_addr = Address(target)
+        target_addr = _parse_address(target)
         if target_addr not in self.protocols:
             raise gl.vm.UserError("Unknown protocol")
         protocol = self.protocols[target_addr]
@@ -386,7 +410,7 @@ Your entire output must be valid JSON parseable without any changes."""
         The circuit-breaker signal. Any protected protocol calls this and
         pauses itself when it returns True.
         """
-        target_addr = Address(target)
+        target_addr = _parse_address(target)
         if target_addr not in self.protocols:
             return False
         return self.protocols[target_addr].halted
@@ -419,11 +443,11 @@ Your entire output must be valid JSON parseable without any changes."""
 
     @gl.public.view
     def get_reputation(self, reporter: str) -> int:
-        return int(self.reputation.get(Address(reporter), 0))
+        return int(self.reputation.get(_parse_address(reporter), 0))
 
     @gl.public.view
     def get_owed(self, reporter: str) -> int:
-        return int(self.owed.get(Address(reporter), 0))
+        return int(self.owed.get(_parse_address(reporter), 0))
 
     @gl.public.view
     def get_stats(self) -> dict:
