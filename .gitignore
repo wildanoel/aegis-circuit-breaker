@@ -17,3 +17,4 @@ frontend/out/
 *.log
 out
 frontend/.env.local
+frontend/tsconfig.tsbuildinfo

@@ -13,7 +13,9 @@ export interface Report {
   target: string;
   evidence_url: string;
   title: string;
-  status: "pending" | "confirmed" | "rejected";
+  // "inconclusive" means consensus confirmed a real finding, but it did not
+  // clear the severity + confidence bar required to halt a live protocol.
+  status: "pending" | "confirmed" | "inconclusive" | "rejected";
   severity: "critical" | "high" | "medium" | "low";
   confidence: number;
   reason: string;

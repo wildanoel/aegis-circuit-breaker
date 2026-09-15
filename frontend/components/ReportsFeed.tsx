@@ -1,6 +1,6 @@
 "use client";
 
-import { FileSearch, ExternalLink, CheckCircle2, XCircle } from "lucide-react";
+import { FileSearch, ExternalLink, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 import { useReports } from "@/lib/hooks/useAegis";
 import { AddressDisplay } from "./AddressDisplay";
 import { Badge } from "./ui/badge";
@@ -15,15 +15,29 @@ const SEVERITY_STYLE: Record<Report["severity"], string> = {
 
 function ReportRow({ r }: { r: Report }) {
   const confirmed = r.status === "confirmed";
+  // A real finding that did not meet the bar to halt a live protocol. It is
+  // neither a success nor a rejection, so it gets its own treatment.
+  const inconclusive = r.status === "inconclusive";
+
+  const statusIcon = confirmed ? (
+    <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
+  ) : inconclusive ? (
+    <AlertTriangle className="w-4 h-4 text-warning shrink-0" />
+  ) : (
+    <XCircle className="w-4 h-4 text-muted-foreground shrink-0" />
+  );
+
+  const statusColor = confirmed
+    ? "text-success"
+    : inconclusive
+      ? "text-warning"
+      : "text-foreground";
+
   return (
     <div className="rounded-lg border border-border p-4 hover:border-border transition-colors">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0">
-          {confirmed ? (
-            <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
-          ) : (
-            <XCircle className="w-4 h-4 text-muted-foreground shrink-0" />
-          )}
+          {statusIcon}
           <span className="font-semibold truncate">{r.title}</span>
         </div>
         <Badge className={`border ${SEVERITY_STYLE[r.severity]} uppercase shrink-0`}>
@@ -33,10 +47,16 @@ function ReportRow({ r }: { r: Report }) {
 
       <p className="mt-2 text-sm text-muted-foreground">{r.reason}</p>
 
+      {inconclusive && (
+        <p className="mt-2 text-xs text-warning">
+          Confirmed finding, but below the severity and confidence bar required to halt.
+          Recorded for human review.
+        </p>
+      )}
+
       <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
         <span>
-          Status:{" "}
-          <span className={confirmed ? "text-success" : "text-foreground"}>{r.status}</span>
+          Status: <span className={statusColor}>{r.status}</span>
         </span>
         <span>Confidence: {r.confidence}%</span>
         {r.bounty_paid > 0 && <span className="text-accent">Bounty: {r.bounty_paid} wei</span>}
