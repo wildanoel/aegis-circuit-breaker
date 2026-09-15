@@ -16,7 +16,7 @@ const grotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://aegisbreaker.vercel.app"),
+  metadataBase: new URL("https://aegisbreaker.app"),
   title: "Aegis: Exploit Circuit Breaker on GenLayer",
   description:
     "Aegis verifies exploit reports with GenLayer validator consensus. On confirmation it halts the target protocol and pays the reporter, with no multisig and no trusted operator.",
