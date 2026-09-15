@@ -9,7 +9,7 @@ an LLM over real content, we assert on the resulting on-chain state transitions
 """
 
 import pytest
-from gltest import get_contract_factory, default_account
+from gltest import get_contract_factory, get_default_account
 from gltest.helpers import load_fixture
 from gltest.assertions import tx_execution_succeeded
 
