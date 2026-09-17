@@ -4,6 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { StatsBar } from "@/components/StatsBar";
 import { ProtocolsList } from "@/components/ProtocolsList";
 import { ReportsFeed } from "@/components/ReportsFeed";
+import { HaltChecker } from "@/components/HaltChecker";
 
 const STEPS = [
   {
@@ -25,6 +26,35 @@ const STEPS = [
     n: "04",
     title: "Response",
     body: "A confirmed exploit arms the halt, pays a severity-scaled bounty from the pool, and credits reporter reputation. No human in the loop.",
+  },
+];
+
+// Real incidents where minutes mattered. The window between a public PoC and
+// protocol-level containment is exactly what Aegis automates away.
+const INCIDENTS = [
+  {
+    protocol: "Ronin Bridge",
+    date: "Mar 2022",
+    loss: "$624M",
+    lesson: "Social-engineered keys; the exploit was live for days before anyone pulled the plug.",
+  },
+  {
+    protocol: "Wormhole",
+    date: "Feb 2022",
+    loss: "$326M",
+    lesson: "Signature verification bug; guardian set reacted, but only after 4 hours of drain.",
+  },
+  {
+    protocol: "Poly Network",
+    date: "Aug 2021",
+    loss: "$611M",
+    lesson: "Cross-contract call flaw; pausing was manual, scattered, and slow.",
+  },
+  {
+    protocol: "Euler Finance",
+    date: "Mar 2023",
+    loss: "$197M",
+    lesson: "Donation bug from a public disclosure; the vulnerable path was live the moment details spread.",
   },
 ];
 
@@ -54,6 +84,11 @@ export default function HomePage() {
             <StatsBar />
           </section>
 
+          {/* Halt checker */}
+          <section className="mb-10 animate-slide-up">
+            <HaltChecker />
+          </section>
+
           {/* Protocols + feed */}
           <section className="grid grid-cols-1 gap-6 lg:grid-cols-12">
             <div className="animate-slide-up lg:col-span-5">
@@ -77,6 +112,37 @@ export default function HomePage() {
                   <div className="mt-3 font-semibold">{s.title}</div>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                     {s.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Why minutes matter */}
+          <section className="mt-16 border-t border-border pt-12">
+            <h2 className="text-2xl font-bold tracking-tight">
+              Why minutes matter
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+              Every incident below stayed live far longer than an Aegis
+              adjudication cycle. These are the minutes a self-pulling circuit
+              breaker removes from the equation.
+            </p>
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {INCIDENTS.map((i) => (
+                <div
+                  key={i.protocol}
+                  className="rounded-lg border border-border bg-card p-5"
+                >
+                  <div className="flex items-baseline justify-between gap-2">
+                    <div className="font-semibold">{i.protocol}</div>
+                    <div className="text-xs text-muted-foreground">{i.date}</div>
+                  </div>
+                  <div className="mt-2 text-2xl font-bold text-destructive">
+                    {i.loss}
+                  </div>
+                  <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                    {i.lesson}
                   </p>
                 </div>
               ))}

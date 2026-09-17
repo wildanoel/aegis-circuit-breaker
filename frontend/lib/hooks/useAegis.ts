@@ -58,6 +58,21 @@ export function useReports() {
   });
 }
 
+/**
+ * Live halt-state lookup for any address. This is the exact call a protected
+ * protocol makes in its own code path: is_halted(target) -> pause.
+ */
+export function useIsHalted(target: string | null) {
+  const contract = useAegisContract();
+  return useQuery<boolean, Error>({
+    queryKey: ["aegis-halted", target],
+    queryFn: () => (contract && target ? contract.isHalted(target) : Promise.resolve(false)),
+    enabled: !!contract && !!target && /^0x[0-9a-fA-F]{40}$/.test(target),
+    staleTime: 2000,
+    retry: 1,
+  });
+}
+
 function useInvalidateAll() {
   const queryClient = useQueryClient();
   return () => {

@@ -2,6 +2,7 @@
 
 import { Shield, OctagonPause, ExternalLink } from "lucide-react";
 import { useProtocols } from "@/lib/hooks/useAegis";
+import { explorerAddress } from "@/lib/genlayer/chain";
 import { AddressDisplay } from "./AddressDisplay";
 import { Badge } from "./ui/badge";
 import { RegisterProtocolModal } from "./RegisterProtocolModal";
@@ -48,16 +49,30 @@ export function ProtocolsList() {
                     </Badge>
                   )}
                 </div>
-                {p.docs_url && (
+                <div className="flex items-center gap-3">
+                  {p.docs_url && (
+                    <a
+                      href={p.docs_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-muted-foreground hover:text-accent"
+                      aria-label={`${p.label} docs`}
+                      title="Protocol docs"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
                   <a
-                    href={p.docs_url}
+                    href={explorerAddress(p.target)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-muted-foreground hover:text-accent"
+                    aria-label={`${p.label} on explorer`}
+                    title="View on explorer"
                   >
-                    <ExternalLink className="w-4 h-4" />
+                    <span className="text-xs font-mono">TXS</span>
                   </a>
-                )}
+                </div>
               </div>
               <div className="mt-2 text-xs text-muted-foreground">
                 <AddressDisplay address={p.target} maxLength={20} showCopy />

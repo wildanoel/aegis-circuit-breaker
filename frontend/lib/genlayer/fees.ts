@@ -93,3 +93,48 @@ export async function estimateWriteFeePreset(
     observed: estimate?.observed,
   };
 }
+
+/**
+ * Fee set verified working on studio-dev (chain 61997) via E2E writes on the
+ * deployed Aegis contract. Used whenever live estimation is unavailable.
+ */
+export const STUDIO_DEV_FALLBACK_FEES = {
+  distribution: {
+    leaderTimeunitsAllocation: 300,
+    validatorTimeunitsAllocation: 300,
+    appealRounds: 0,
+    executionBudgetPerRound: 100_000_000_000_000,
+    executionConsumed: 0,
+    totalMessageFees: 0,
+    rotations: [0],
+    maxPriceGenPerTimeUnit: 2,
+    storageFeeMaxGasPrice: 300_000_000,
+    receiptFeeMaxGasPrice: 300_000_000,
+  },
+  feeValue: "10000000000002588",
+};
+
+/**
+ * Resolve explicit fees for a write. studio-dev rejects the SDK's implicit
+ * auto-fee path with FeeValueMustBeNonZero(1) at consensus time, so every
+ * writeContract call must carry a fees object. Prefer live estimation
+ * (appealRounds 0 preset = the shape verified in E2E); fall back to the
+ * hardcoded verified set on any gap.
+ */
+export async function resolveWriteFees(client: any): Promise<Record<string, unknown>> {
+  try {
+    if (typeof client?.estimateTransactionFees === "function") {
+      const est = await client.estimateTransactionFees({
+        appealRounds: 0n,
+        rotations: [0n],
+      });
+      const feeValue = est?.feeValue ?? est?.fee_value;
+      if (est?.distribution && feeValue !== undefined && BigInt(feeValue) > 0n) {
+        return { distribution: est.distribution, feeValue };
+      }
+    }
+  } catch (e) {
+    console.warn("fee estimation unavailable, using studio-dev fallback", e);
+  }
+  return { ...STUDIO_DEV_FALLBACK_FEES };
+}

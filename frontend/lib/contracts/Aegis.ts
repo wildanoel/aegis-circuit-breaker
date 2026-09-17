@@ -1,6 +1,39 @@
 import { createClient } from "genlayer-js";
-import { studionet } from "genlayer-js/chains";
+import { getChain } from "@/lib/genlayer/chain";
+import { resolveWriteFees } from "@/lib/genlayer/fees";
 import type { Protocol, Report, AegisStats, TransactionReceipt } from "./types";
+
+/**
+ * Decode a UserError message from a FINISHED_WITH_ERROR GenLayer receipt.
+ * The message lives base64-encoded in consensus_data.validators[].result as
+ * [errorTypeByte][utf8 message]; validators that idled say "idle", crashed
+ * generic paths say "exit_code N" - prefer a human-readable one.
+ */
+function decodeRevertMessage(receipt: any): string | undefined {
+  const validators: any[] =
+    receipt?.consensus_data?.validators ?? receipt?.consensusData?.validators ?? [];
+  const b64 = (s: string): string | undefined => {
+    try {
+      const bin =
+        typeof atob === "function"
+          ? atob(s)
+          : Buffer.from(s, "base64").toString("binary");
+      const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+      return new TextDecoder().decode(bytes.subarray(1));
+    } catch {
+      return undefined;
+    }
+  };
+  let generic: string | undefined;
+  for (const v of validators) {
+    if (typeof v?.result !== "string" || !v.result) continue;
+    const msg = b64(v.result);
+    if (!msg || msg === "idle") continue;
+    if (!/^exit_code/i.test(msg)) return msg;
+    generic ??= msg;
+  }
+  return generic;
+}
 
 /**
  * Aegis contract client - the autonomous exploit-response circuit breaker.
@@ -17,7 +50,7 @@ class Aegis {
   }
 
   private buildClient(address?: string | null) {
-    const config: any = { chain: studionet };
+    const config: any = { chain: getChain() };
     if (address) config.account = address as `0x${string}`;
     if (this.studioUrl) config.endpoint = this.studioUrl;
     return createClient(config);
@@ -68,8 +101,15 @@ class Aegis {
         functionName: "get_protocols",
         args: [],
       });
-      if (raw instanceof Map) {
-        return Array.from(raw.entries()).map(([target, data]: any) => {
+      // genlayer-js returns TreeMap-typed `dict` results as plain objects;
+      // keep Map/array tolerance in case the SDK shape changes again.
+      let entries: [any, any][] = [];
+      if (raw instanceof Map) entries = Array.from(raw.entries());
+      else if (Array.isArray(raw)) entries = raw.map((p: any) => [p?.target, p]);
+      else if (raw && typeof raw === "object") entries = Object.entries(raw);
+      return entries
+        .filter(([, data]) => data && typeof data === "object")
+        .map(([target, data]: [any, any]) => {
           const o = this.mapToObj(data);
           return {
             target,
@@ -80,8 +120,6 @@ class Aegis {
             registered_by: o.registered_by,
           } as Protocol;
         });
-      }
-      return [];
     } catch (e) {
       console.error("getProtocols failed", e);
       return [];
@@ -135,18 +173,27 @@ class Aegis {
   // ---------------- Writes ----------------
 
   private async send(functionName: string, args: any[], value = BigInt(0)): Promise<TransactionReceipt> {
+    // studio-dev consensus reverts SDK auto-estimated writes with
+    // FeeValueMustBeNonZero(1) - every write must carry explicit fees.
+    const fees = await resolveWriteFees(this.client);
     const txHash = await this.client.writeContract({
       address: this.contractAddress,
       functionName,
       args,
       value,
+      fees,
     });
-    const receipt = await this.client.waitForTransactionReceipt({
+    // `status` is deprecated in genlayer-js; waitUntil is the current knob.
+    const receipt: any = await this.client.waitForTransactionReceipt({
       hash: txHash,
-      status: "ACCEPTED" as any,
-      retries: 30,
+      waitUntil: "finalized",
+      retries: 60,
       interval: 5000,
     });
+    const execName = String(receipt?.txExecutionResultName ?? receipt?.resultName ?? "");
+    if (execName.includes("ERROR")) {
+      throw new Error(decodeRevertMessage(receipt) ?? "Transaction failed on GenLayer.");
+    }
     return receipt as TransactionReceipt;
   }
 

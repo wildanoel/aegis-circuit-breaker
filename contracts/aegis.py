@@ -1,4 +1,4 @@
-# { "Depends": "py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6" }
+# { "Depends": "py-genlayer:5jycge4q8k23462jtb0b9fyey1s9qz928sz2nbrd9mg4sxqg2qng" }
 
 # Aegis - Autonomous Exploit-Response Circuit Breaker
 #
@@ -18,7 +18,9 @@
 import json
 from dataclasses import dataclass
 
-from genlayer import *
+import genlayer as gl
+from genlayer.types import *
+from genlayer.storage import TreeMap
 
 
 # Severity tiers. Bounty is scaled by tier when the pool is funded.
@@ -88,7 +90,7 @@ def _parse_address(raw) -> Address:
     return Address("0x" + text.lower())
 
 
-@allow_storage
+@gl.storage.allow
 @dataclass
 class Protocol:
     target: Address
@@ -99,7 +101,7 @@ class Protocol:
     registered_by: Address
 
 
-@allow_storage
+@gl.storage.allow
 @dataclass
 class Report:
     id: u256
@@ -115,7 +117,7 @@ class Report:
     bounty_paid: u256
 
 
-class Aegis(gl.Contract):
+class Aegis(gl.contract.Contract):
     guardian: Address
     # base bounty (in wei of the native GEN token) for a "low" severity finding.
     base_bounty: u256
