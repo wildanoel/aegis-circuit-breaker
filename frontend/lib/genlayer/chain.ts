@@ -14,14 +14,14 @@ import { studionet } from "genlayer-js/chains";
  * Studio instances and must not be hand-rolled.
  */
 export const GENLAYER_CHAIN_ID = parseInt(
-  process.env.NEXT_PUBLIC_GENLAYER_CHAIN_ID || "61999",
+  process.env.NEXT_PUBLIC_GENLAYER_CHAIN_ID || "61997",
   10
 );
 
 /** Explorer base URL for the deployed chain. */
 export const EXPLORER_URL =
   process.env.NEXT_PUBLIC_EXPLORER_URL ||
-  "https://explorer-studio.genlayer.com";
+  "https://explorer-studio-dev.genlayer.com";
 
 export function explorerAddress(address: string): string {
   return `${EXPLORER_URL}/address/${address}`;
@@ -33,9 +33,9 @@ export function explorerTx(hash: string): string {
 
 export function getChain() {
   const rpcUrl =
-    process.env.NEXT_PUBLIC_GENLAYER_RPC_URL || "https://studio.genlayer.com/api";
+    process.env.NEXT_PUBLIC_GENLAYER_RPC_URL || "https://studio-dev.genlayer.com/api";
   const chainName =
-    process.env.NEXT_PUBLIC_GENLAYER_CHAIN_NAME || "GenLayer Studio";
+    process.env.NEXT_PUBLIC_GENLAYER_CHAIN_NAME || "GenLayer Studio Dev";
 
   if (
     GENLAYER_CHAIN_ID === studionet.id &&

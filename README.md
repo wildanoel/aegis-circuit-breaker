@@ -20,6 +20,23 @@ This is the reference build for the **Autonomous Protocols** track: a contract
 that governs and pauses *other* contracts, driven purely by evidence-based
 consensus.
 
+## Live Deployment & Verification
+
+- **Live Dapp:** [https://aegisbreaker.app](https://aegisbreaker.app)
+- **Network:** GenLayer Studio Next / Studio Dev (Chain ID: `61997`)
+- **RPC URL:** `https://studio-dev.genlayer.com/api`
+- **Contract Address:** `0xB0C0799099f8C52c1B39972A5945C6757E9c9815`
+- **Explorer:** [https://explorer-studio-dev.genlayer.com/address/0xB0C0799099f8C52c1B39972A5945C6757E9c9815](https://explorer-studio-dev.genlayer.com/address/0xB0C0799099f8C52c1B39972A5945C6757E9c9815)
+- **Deploy Record:** See [DEPLOYED.md](./DEPLOYED.md) for complete consensus and verification logs.
+
+### Quick Verification
+
+To verify the live contract state without needing a wallet or keys:
+```bash
+node scripts/e2e_verify.mjs
+```
+Returns current protocol count, registered targets, reports, and AI consensus verdicts.
+
 ## Why this needs GenLayer
 
 A normal smart contract cannot decide "is this a real, active exploit?" — that
@@ -116,16 +133,15 @@ gltest tests/integration/ -v -s
 # Deploy to a chosen network with an initial base bounty (wei).
 AEGIS_BASE_BOUNTY=0 genlayer deploy --contract contracts/aegis.py --args 0
 
-# Or via the deploy script / Studio at https://studio.genlayer.com
+# Or deploy to Studio Next (chain 61997) via scripts/build_deploy.py
 ```
 
 Then point the frontend at it:
 
 ```bash
 cd frontend
-cp .env.example .env
-# set NEXT_PUBLIC_CONTRACT_ADDRESS + RPC URL
-npm install && npm run dev
+cp .env.example .env.local
+npm install && npm run dev   # defaults out-of-the-box to Studio Next 61997
 ```
 
 ## Security notes

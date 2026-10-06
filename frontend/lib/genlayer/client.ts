@@ -5,19 +5,19 @@ import { studionet } from "genlayer-js/chains";
 import { createWalletClient, custom, type WalletClient } from "viem";
 
 // GenLayer Network Configuration (from environment variables with fallbacks)
-export const GENLAYER_CHAIN_ID = parseInt(process.env.NEXT_PUBLIC_GENLAYER_CHAIN_ID || "61999");
+export const GENLAYER_CHAIN_ID = parseInt(process.env.NEXT_PUBLIC_GENLAYER_CHAIN_ID || "61997");
 export const GENLAYER_CHAIN_ID_HEX = `0x${GENLAYER_CHAIN_ID.toString(16).toUpperCase()}`;
 
 export const GENLAYER_NETWORK = {
   chainId: GENLAYER_CHAIN_ID_HEX,
-  chainName: process.env.NEXT_PUBLIC_GENLAYER_CHAIN_NAME || "GenLayer Studio",
+  chainName: process.env.NEXT_PUBLIC_GENLAYER_CHAIN_NAME || "GenLayer Studio Dev",
   nativeCurrency: {
     name: process.env.NEXT_PUBLIC_GENLAYER_SYMBOL || "GEN",
     symbol: process.env.NEXT_PUBLIC_GENLAYER_SYMBOL || "GEN",
     decimals: 18,
   },
-  rpcUrls: [process.env.NEXT_PUBLIC_GENLAYER_RPC_URL || "https://studio.genlayer.com/api"],
-  blockExplorerUrls: ["https://explorer-studio.genlayer.com"],
+  rpcUrls: [process.env.NEXT_PUBLIC_GENLAYER_RPC_URL || "https://studio-dev.genlayer.com/api"],
+  blockExplorerUrls: ["https://explorer-studio-dev.genlayer.com"],
 };
 
 // Ethereum provider type from window
@@ -39,7 +39,7 @@ declare global {
  */
 export function getStudioUrl(): string {
   return (
-    process.env.NEXT_PUBLIC_GENLAYER_RPC_URL || "https://studio.genlayer.com/api"
+    process.env.NEXT_PUBLIC_GENLAYER_RPC_URL || "https://studio-dev.genlayer.com/api"
   );
 }
 
@@ -47,12 +47,10 @@ export function getStudioUrl(): string {
  * Get the contract address from environment variables
  */
 export function getContractAddress(): string {
-  const address = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS;
-  if (!address) {
-    // Return empty string during build, error will be shown in UI during runtime
-    return "";
-  }
-  return address;
+  return (
+    process.env.NEXT_PUBLIC_CONTRACT_ADDRESS ||
+    "0xB0C0799099f8C52c1B39972A5945C6757E9c9815"
+  );
 }
 
 /**
